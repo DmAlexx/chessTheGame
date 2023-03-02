@@ -1,27 +1,18 @@
 #include "Figure.h"
 
-Figure::Figure(FigureType type, FigureColor color, FigureSprite sprite, Position position)
-	: m_type(type)
-	, m_color(color)
-	, m_sprite(sprite)
-	, m_position(position)
+Figure::Figure(FigureColor color)
+	: m_color(color)
 {
 }
 
 Figure::Figure(Figure& right)
-	: m_type(right.m_type)
-	, m_color(right.m_color)
-	, m_sprite(right.m_sprite)
-	, m_position(right.m_position)
+	: m_color(right.m_color)
 {
 }
 
 Figure& Figure::operator=(const Figure& right)
 {
-	m_type = right.m_type;
 	m_color = right.m_color;
-	m_sprite = right.m_sprite;
-	m_position = right.m_position;
 	return *this;
 }
 
@@ -29,82 +20,134 @@ Figure& Figure::operator=(const Figure& right)
 //KING
 ////////////////////////
 
-King::King(FigureType type, FigureColor color, FigureSprite sprite, Position position)
-	: Figure(FigureType::KING, color, sprite, position)
+King::King(FigureColor color)
+	: Figure(color)
 {
 }
 
-bool King::checkMove(const Position& position)
+bool King::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
-	return false;
+	if (abs(currentPosition.x - nextPosition.x) <= 1 && abs(currentPosition.y - nextPosition.y) <= 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+const FigureType& King::getType()
+{
+	return FigureType::KING;
 }
 
 ////////////////////////
 //QUEEN
 ////////////////////////
 
-Queen::Queen(FigureType type, FigureColor color, FigureSprite sprite, Position position)
-	:Figure(FigureType::QUEEN, color, sprite)
+Queen::Queen(FigureColor color)
+	:Figure(color)
 {
 }
 
-bool Queen::checkMove(const Position& position)
+bool Queen::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
-	return false;
+
+	if (abs(currentPosition.x - nextPosition.x) == 0 || abs(currentPosition.y - nextPosition.y) == 0 || abs(currentPosition.x - nextPosition.x) == abs(currentPosition.y - nextPosition.y))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+const FigureType& Queen::getType()
+{
+	return FigureType::QUEEN;
 }
 
 ////////////////////////
 //BISHOP
 ////////////////////////
 
-Bishop::Bishop(FigureType type, FigureColor color, FigureSprite sprite, Position position)
-	: Figure(FigureType::BISHOP, color, sprite)
+Bishop::Bishop(FigureColor color)
+	: Figure(color)
 {
 }
 
-bool Bishop::checkMove(const Position& position)
+bool Bishop::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
-	return false;
+	if (abs(currentPosition.x - nextPosition.x) == abs(currentPosition.y - nextPosition.y))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+const FigureType& Bishop::getType()
+{
+	return FigureType::BISHOP;
 }
 
 ////////////////////////
 //KNIGHT
 ////////////////////////
 
-Knight::Knight(FigureType type, FigureColor color, FigureSprite sprite, Position position)
-	: Figure(FigureType::KNIGHT, color, sprite)
+Knight::Knight(FigureColor color)
+	: Figure(color)
 {
 }
 
-bool Knight::checkMove(const Position& position)
+bool Knight::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
 	return false;
+}
+
+const FigureType& Knight::getType()
+{
+	return FigureType::KNIGHT;
 }
 
 ////////////////////////
 //ROOK
 ////////////////////////
 
-Rook::Rook(FigureType type, FigureColor color, FigureSprite sprite, Position position)
-	: Figure(FigureType::ROOK, color, sprite)
+Rook::Rook(FigureColor color)
+	: Figure(color)
 {
 }
 
-bool Rook::checkMove(const Position& position)
+bool Rook::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
 	return false;
+}
+
+const FigureType& Rook::getType()
+{
+	return FigureType::ROOK;
 }
 
 ////////////////////////
 //PAWN
 ////////////////////////
 
-Pawn::Pawn(FigureType type, FigureColor color, FigureSprite sprite, Position position)
-	: Figure(FigureType::PAWN, color, sprite)
+Pawn::Pawn(FigureColor color)
+	: Figure(color)
 {
 }
 
-bool Pawn::checkMove(const Position& position)
+bool Pawn::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
 	return false;
+}
+
+const FigureType& Pawn::getType()
+{
+	return FigureType::PAWN;
 }

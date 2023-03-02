@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 
 enum class FigureType
 {
@@ -43,34 +44,34 @@ class Figure
 {
 public:
 
-	Figure(FigureType type, FigureColor color, FigureSprite sprite, Position position);
+	Figure(FigureColor color);
     Figure(Figure& right);
     Figure& operator=(const Figure& right);
 
-    virtual bool checkMove(const Position& position) = 0;
-    const FigureType& getType() const { return m_type; }
+    virtual bool checkMove(const Position& currentPosition, const Position& nextPosition) = 0;
+    const virtual FigureType& getType() = 0;
     const FigureColor& getColor() const { return m_color; }
 
 private:
-    FigureType m_type;
     FigureColor m_color;
-    FigureSprite m_sprite;
-    Position m_position;
 };
 
 class King :public Figure
 {
 public:
-    King(FigureType type, FigureColor color, FigureSprite sprite, Position position);
-    bool checkMove(const Position& position) override;
+    King(FigureColor color);
+    bool checkMove(const Position& currentPosition, const Position& nextPosition) override;
+    const FigureType& getType() override;
+
 private:
 };
 
 class Queen :public Figure
 {
 public:
-    Queen(FigureType type, FigureColor color, FigureSprite sprite, Position position);
-    bool checkMove(const Position& position) override;
+    Queen(FigureColor color);
+    bool checkMove(const Position& currentPosition, const Position& nextPosition) override;
+    const FigureType& getType() override;
 
 private:
 };
@@ -78,8 +79,9 @@ private:
 class Bishop :public Figure
 {
 public:
-    Bishop(FigureType type, FigureColor color, FigureSprite sprite, Position position);
-    bool checkMove(const Position& position) override;
+    Bishop(FigureColor color);
+    bool checkMove(const Position& currentPosition, const Position& nextPosition) override;
+    const FigureType& getType() override;
 
 private:
 };
@@ -87,8 +89,9 @@ private:
 class Knight :public Figure
 {
 public:
-    Knight(FigureType type, FigureColor color, FigureSprite sprite, Position position);
-    bool checkMove(const Position& position) override;
+    Knight(FigureColor color);
+    bool checkMove(const Position& currentPosition, const Position& nextPosition) override;
+    const FigureType& getType() override;
 
 private:
 };
@@ -96,8 +99,9 @@ private:
 class Rook :public Figure
 {
 public:
-    Rook(FigureType type, FigureColor color, FigureSprite sprite, Position position);
-    bool checkMove(const Position& position) override;
+    Rook(FigureColor color);
+    bool checkMove(const Position& currentPosition, const Position& nextPosition) override;
+    const FigureType& getType() override;
 
 private:
 };
@@ -105,8 +109,9 @@ private:
 class Pawn :public Figure
 {
 public:
-    Pawn(FigureType type, FigureColor color, FigureSprite sprite, Position position);
-    bool checkMove(const Position& position) override;
+    Pawn(FigureColor color);
+    bool checkMove(const Position& currentPosition, const Position& nextPosition) override;
+    const FigureType& getType() override;
 
 private:
 };
