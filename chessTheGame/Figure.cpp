@@ -1,5 +1,11 @@
 #include "Figure.h"
 
+namespace
+{
+	int WHITE_PAWN_START_POSITION_X = 1;
+	int BLACK_PAWN_START_POSITION_X = 6;
+}
+
 Figure::Figure(FigureColor color)
 	: m_color(color)
 {
@@ -106,7 +112,14 @@ Knight::Knight(FigureColor color)
 
 bool Knight::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
-	return false;
+	if (abs(currentPosition.x - nextPosition.x) == 1 && abs(currentPosition.y - nextPosition.y) == 2 || abs(currentPosition.x - nextPosition.x) == 2 && abs(currentPosition.y - nextPosition.y) == 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 const FigureType& Knight::getType()
@@ -125,7 +138,14 @@ Rook::Rook(FigureColor color)
 
 bool Rook::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
-	return false;
+	if (currentPosition.x == nextPosition.x || currentPosition.y == nextPosition.y)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 const FigureType& Rook::getType()
@@ -144,7 +164,25 @@ Pawn::Pawn(FigureColor color)
 
 bool Pawn::checkMove(const Position& currentPosition, const Position& nextPosition)
 {
-	return false;
+	int direction = 0;
+	if (m_color == FigureColor::WHITE)
+	{
+		direction = 1;
+	}
+	else
+	{
+		direction = -1;
+	}
+	if (currentPosition.x + direction == nextPosition.x && currentPosition.y == nextPosition.y 
+		|| currentPosition.x + direction * 2 == nextPosition.x && currentPosition.y == nextPosition.y && currentPosition.x == WHITE_PAWN_START_POSITION_X
+		|| currentPosition.x + direction * 2 == nextPosition.x && currentPosition.y == nextPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_X)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 const FigureType& Pawn::getType()

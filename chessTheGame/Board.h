@@ -1,4 +1,5 @@
 #pragma once
+#include "Figure.h"
 
 namespace
 {
@@ -11,7 +12,7 @@ class Board
 public:
 	Board();
 protected:
-	bool m_board[X][Y];
+	Figure* m_board[X][Y];
 
 };
 

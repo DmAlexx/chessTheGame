@@ -17,22 +17,6 @@ enum class FigureColor
     WHITE
 };
 
-enum class FigureSprite
-{
-    WKI,        //white King
-    WQ,
-    WB,
-    WKN,
-    WR,
-    WP,
-    BKI,
-    BQ,
-    BB,
-    BKN,
-    BR,
-    BP
-};
-
 struct Position
 {
     int x = 0;
@@ -52,7 +36,7 @@ public:
     const virtual FigureType& getType() = 0;
     const FigureColor& getColor() const { return m_color; }
 
-private:
+protected:
     FigureColor m_color;
 };
 
