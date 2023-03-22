@@ -4,6 +4,7 @@
 #include "Gamer.h"
 #include "Visual.h"
 #include "UserInterface.h"
+#include "Square.h"
 
 int main()
 {

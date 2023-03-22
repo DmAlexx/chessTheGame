@@ -2,8 +2,8 @@
 
 namespace
 {
-	int WHITE_PAWN_START_POSITION_X = 1;
-	int BLACK_PAWN_START_POSITION_X = 6;
+	const int WHITE_PAWN_START_POSITION_Y = 1;
+	const int BLACK_PAWN_START_POSITION_Y = 6;
 }
 
 Figure::Figure(FigureColor color)
@@ -31,9 +31,9 @@ King::King(FigureColor color)
 {
 }
 
-bool King::checkMove(const Position& currentPosition, const Position& nextPosition)
+bool King::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
-	if (abs(currentPosition.x - nextPosition.x) <= 1 && abs(currentPosition.y - nextPosition.y) <= 1)
+	if (abs(currentPosition.x - lastPosition.x) <= 1 && abs(currentPosition.y - lastPosition.y) <= 1)
 	{
 		return true;
 	}
@@ -57,10 +57,10 @@ Queen::Queen(FigureColor color)
 {
 }
 
-bool Queen::checkMove(const Position& currentPosition, const Position& nextPosition)
+bool Queen::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
 
-	if (abs(currentPosition.x - nextPosition.x) == 0 || abs(currentPosition.y - nextPosition.y) == 0 || abs(currentPosition.x - nextPosition.x) == abs(currentPosition.y - nextPosition.y))
+	if (abs(currentPosition.x - lastPosition.x) == 0 || abs(currentPosition.y - lastPosition.y) == 0 || abs(currentPosition.x - lastPosition.x) == abs(currentPosition.y - lastPosition.y))
 	{
 		return true;
 	}
@@ -84,9 +84,9 @@ Bishop::Bishop(FigureColor color)
 {
 }
 
-bool Bishop::checkMove(const Position& currentPosition, const Position& nextPosition)
+bool Bishop::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
-	if (abs(currentPosition.x - nextPosition.x) == abs(currentPosition.y - nextPosition.y))
+	if (abs(currentPosition.x - lastPosition.x) == abs(currentPosition.y - lastPosition.y))
 	{
 		return true;
 	}
@@ -110,9 +110,9 @@ Knight::Knight(FigureColor color)
 {
 }
 
-bool Knight::checkMove(const Position& currentPosition, const Position& nextPosition)
+bool Knight::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
-	if (abs(currentPosition.x - nextPosition.x) == 1 && abs(currentPosition.y - nextPosition.y) == 2 || abs(currentPosition.x - nextPosition.x) == 2 && abs(currentPosition.y - nextPosition.y) == 1)
+	if (abs(currentPosition.x - lastPosition.x) == 1 && abs(currentPosition.y - lastPosition.y) == 2 || abs(currentPosition.x - lastPosition.x) == 2 && abs(currentPosition.y - lastPosition.y) == 1)
 	{
 		return true;
 	}
@@ -136,9 +136,9 @@ Rook::Rook(FigureColor color)
 {
 }
 
-bool Rook::checkMove(const Position& currentPosition, const Position& nextPosition)
+bool Rook::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
-	if (currentPosition.x == nextPosition.x || currentPosition.y == nextPosition.y)
+	if (currentPosition.x == lastPosition.x || currentPosition.y == lastPosition.y)
 	{
 		return true;
 	}
@@ -162,23 +162,21 @@ Pawn::Pawn(FigureColor color)
 {
 }
 
-bool Pawn::checkMove(const Position& currentPosition, const Position& nextPosition)
+bool Pawn::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
-	int direction = 0;
-	if (m_color == FigureColor::WHITE)
-	{
-		direction = 1;
-	}
-	else
-	{
-		direction = -1;
-	}
-	if (currentPosition.x + direction == nextPosition.x && currentPosition.y == nextPosition.y 
-		|| currentPosition.x + direction * 2 == nextPosition.x && currentPosition.y == nextPosition.y && currentPosition.x == WHITE_PAWN_START_POSITION_X
-		|| currentPosition.x + direction * 2 == nextPosition.x && currentPosition.y == nextPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_X)
+	int direction = (m_color == FigureColor::WHITE) ? 1 : -1;
+	int startRow = (m_color == FigureColor::WHITE) ? WHITE_PAWN_START_POSITION_Y : BLACK_PAWN_START_POSITION_Y;
+
+	if (currentPosition.x + direction == lastPosition.x && currentPosition.y == lastPosition.y
+		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == WHITE_PAWN_START_POSITION_Y
+		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_Y)
 	{
 		return true;
 	}
+	/*else if()
+	{
+
+	}*/
 	else
 	{
 		return false;

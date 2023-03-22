@@ -2,54 +2,157 @@
 
 Visual::Visual()
 {
-	for (int i = 0; i < LENGTH_WIDTH_SIZE_BOARD; ++i)
+	
+}
+
+void Visual::printBoardFiguresForWhite(Board* board) const
+{
+	Position position;
+	for (int i = (LAST_COORD_OF_BOARD - 1); i > - 1; --i)
 	{
-		for (int j = 0; j < LENGTH_WIDTH_SIZE_BOARD; ++j)
+		for (int j = (LAST_COORD_OF_BOARD - 1); j > -1; --j)
 		{
-			switch (i)
+			position.y = j;
+			position.x = i;
+			std::cout << SEPARATOR;
+
+			if (board->getSquare(position)->getSquareColor() == SquareColor::BLACK && !board->isFigurePlaced(position))
 			{
-			case BLACK_FIGURES_START_POSITION:
-				for (auto it : FigureSpriteOut)
+				std::cout << "X ";
+			}
+			else if (board->getSquare(position)->getSquareColor() == SquareColor::WHITE && !board->isFigurePlaced(position))
+			{
+				std::cout << EMPTY_FILLER << EMPTY_FILLER;
+			}
+			else
+			{
+				if (board->getSquare(position)->getFigure()->getType() == FigureType::BISHOP && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
 				{
-					if (it.first == m_videoOutSpriteBlack[j])
-					{
-						std::cout << "|" << it.second;
-					}
+					std::cout << "WB";
 				}
-				break;
-			case BLACK_PAWNS_START_POSITION:
-				std::cout << "|" << "BP";
-				break;
-			case WHITE_PAWNS_START_POSITION:
-				std::cout << "|" << "WP";
-				break;
-			case WHITE_FIGURES_START_POSITION:
-				for (auto it : FigureSpriteOut)
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::BISHOP && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
 				{
-					if (it.first == m_videoOutSpriteWhite[j])
-					{
-						std::cout << "|" << it.second;
-					}
+					std::cout << "BB";
 				}
-				break;
-			default:
-				std::cout << "|";
-				if (j % 2 == 0 && i % 2 == 0 || j % 2 != 0 && i % 2 != 0)
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KING && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
 				{
-					std::cout << "* ";
+					std::cout << "WK";
 				}
-				else
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KING && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
 				{
-					std::cout << "  ";
+					std::cout << "BK";
 				}
-				break;
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KNIGHT && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "Wk";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KNIGHT && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "Bk";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::PAWN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WP";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::PAWN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BP";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::QUEEN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WQ";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::QUEEN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BQ";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::ROOK && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WR";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::ROOK && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BR";
+				}
 			}
 		}
-		std::cout << " " << LENGTH_WIDTH_SIZE_BOARD - i << std::endl;
+		std::cout << " " << i+1 << std::endl;
 	}
-	for (int i = 0; i < LENGTH_WIDTH_SIZE_BOARD; ++i)
+	std::cout << " a  b  c  d  e  f  g  h\n\n\n";
+}
+
+void Visual::printBoardFiguresForBlack(Board* board) const
+{
+	Position position;
+	for (int i = 0; i < LAST_COORD_OF_BOARD; ++i)
 	{
-		std::cout << " " << BOARD_LETTERS[i] << " ";
+		for (int j = 0; j< LAST_COORD_OF_BOARD; ++j)
+		{
+			position.y = j;
+			position.x = i;
+			std::cout << SEPARATOR;
+
+			if (board->getSquare(position)->getSquareColor() == SquareColor::BLACK && !board->isFigurePlaced(position))
+			{
+				std::cout << "X ";
+			}
+			else if (board->getSquare(position)->getSquareColor() == SquareColor::WHITE && !board->isFigurePlaced(position))
+			{
+				std::cout << EMPTY_FILLER << EMPTY_FILLER;
+			}
+			else
+			{
+				if (board->getSquare(position)->getFigure()->getType() == FigureType::BISHOP && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WB";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::BISHOP && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BB";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KING && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WK";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KING && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BK";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KNIGHT && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "Wk";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::KNIGHT && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "Bk";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::PAWN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WP";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::PAWN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BP";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::QUEEN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WQ";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::QUEEN && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BQ";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::ROOK && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::WHITE)
+				{
+					std::cout << "WR";
+				}
+				else if (board->getSquare(position)->getFigure()->getType() == FigureType::ROOK && board->getSquare(position)->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "BR";
+				}
+			}
+		}
+		std::cout << " " << 1+i << std::endl;
 	}
-	std::cout << "\n\n";
+	std::cout << " h  g  f  e  d  c  b  a\n\n\n";
 }

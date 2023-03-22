@@ -3,18 +3,16 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include "Square.h"
+#include "Board.h"
+
 
 namespace
 {
     const int LENGTH_WIDTH_SIZE_BOARD = 8;
-    const int NUMBER_OF_FIGURES_EVERY_COLOR = 8;
-    const int BLACK_FIGURES_START_POSITION = 0;
-    const int BLACK_PAWNS_START_POSITION = 1;
-    const int WHITE_PAWNS_START_POSITION = 6;
-    const int WHITE_FIGURES_START_POSITION = 7;
     const char BOARD_LETTERS[LENGTH_WIDTH_SIZE_BOARD] = { 'a','b','c','d','e','f','g','h' };
-    
-
+    const char SEPARATOR = '|';
+    const char EMPTY_FILLER = ' ';
     const enum class FigureSprite
     {
         WK,        //white King
@@ -51,9 +49,8 @@ class Visual
 
 public:
 	Visual();
-
+    void printBoardFiguresForWhite(Board* board) const;
+    void printBoardFiguresForBlack(Board* board) const;
 protected:
-    FigureSprite m_videoOutSpriteWhite[NUMBER_OF_FIGURES_EVERY_COLOR] = { FigureSprite::WR, FigureSprite::Wk, FigureSprite::WB, FigureSprite::WQ, FigureSprite::WK, FigureSprite::WB, FigureSprite::Wk, FigureSprite::WR };
-    FigureSprite m_videoOutSpriteBlack[NUMBER_OF_FIGURES_EVERY_COLOR] = { FigureSprite::BR, FigureSprite::Bk, FigureSprite::BB, FigureSprite::BQ, FigureSprite::BK, FigureSprite::BB, FigureSprite::Bk, FigureSprite::BR };
     
 };

@@ -2,7 +2,11 @@
 #include <iostream>
 #include <cstdlib>
 #include "Visual.h"
+#include "Gamer.h"
+#include "Game.h"
+#include "Figure.h"
 #include <string>
+#include "Board.h"
 
 #ifdef _WIN32
 	#include <conio.h>
@@ -19,8 +23,8 @@ public:
 
 protected:
 	int m_choice = 0;
-	std::string m_choiceFigure;
-	std::string m_choiceMove;
 	void secondMenu();
+	void clearConsole();
+	void waitForPressAnyKey();
 };
 
