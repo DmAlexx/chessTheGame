@@ -2,7 +2,7 @@
 
 namespace
 {
-    const int NUMBERS_OF_FIGURES = 32;
+    //const int NUMBERS_OF_FIGURES = 32;
     const int NUMBER_OF_PAWNS_ANY_COLOR = 8;
 }
 
@@ -12,6 +12,14 @@ Game::~Game()
     {
         delete figure;
     }
+	/*for (auto square : m_whiteSquaresUnderAttak)
+	{
+		delete square;
+	}
+	for (auto square : m_blackSquaresUnderAttak)
+	{
+		delete square;
+	}*/
 }
 
 void Game::figuresArrangement()
@@ -34,7 +42,7 @@ void Game::figuresArrangement()
     }
 
     // Add black figures to the board
-    createFigure(FigureType::ROOK, FigureColor::BLACK, { 7,0 });
+    createFigure(FigureType::ROOK, FigureColor::BLACK, { 7,0 });                                                            
     createFigure(FigureType::KNIGHT, FigureColor::BLACK, { 7,1 });
     createFigure(FigureType::BISHOP, FigureColor::BLACK, { 7,2 });
     createFigure(FigureType::QUEEN, FigureColor::BLACK, { 7,3 });
@@ -84,107 +92,78 @@ void Game::createFigure(FigureType type, FigureColor color, const Position& posi
 bool Game::checkFreePath(const Position& currentPos, const Position& lastPos)
 {
     auto figure = m_board.getSquare(currentPos)->getFigure()->getType();
+	Position nextPosition;
 	Position tempPosition;
-    Position nextPosition;
     int directionX = (lastPos.x > currentPos.x) ? 1 : ((lastPos.x < currentPos.x) ? -1 : 0);
     int directionY = (lastPos.y > currentPos.y) ? 1 : ((lastPos.y < currentPos.y) ? -1 : 0);
-	Position currentPosition = currentPos;;
-	Position lastPosition;
-	lastPosition.x = lastPos.x - directionX;
-	lastPosition.y = lastPos.y - directionY;
+	nextPosition.x = currentPos.x + directionX;
+	nextPosition.y = currentPos.y + directionY;
 
 	switch (figure)
 	{
 	case FigureType::ROOK:
 	case FigureType::QUEEN:
+		while (nextPosition.x != lastPos.x || nextPosition.y != lastPos.y)
+		{
+			if (m_board.isFigurePlaced(nextPosition))
+			{
+				return false;
+			}
+			nextPosition.x += directionX;
+			nextPosition.y += directionY;
+		}
+		return true;
 	case FigureType::BISHOP:
+		while (nextPosition.x != lastPos.x && nextPosition.y != lastPos.y) 
+		{
+			if (nextPosition.x != lastPos.x || nextPosition.y != lastPos.y)
+			{
+				if (m_board.isFigurePlaced(nextPosition))
+				{
+					return false;
+				}
+			}
+			nextPosition.x += directionX;
+			nextPosition.y += directionY;
+		}
+		return true;
+
 	case FigureType::PAWN:
-
-		nextPosition.x = currentPosition.x + directionX;
-		nextPosition.y = currentPosition.y + directionY;
-
-		if (lastPosition.x < currentPosition.x && lastPosition.y < currentPosition.y)
-		{
-			while (nextPosition.x > lastPosition.x && nextPosition.y > lastPosition.y)
+		while (directionX == 0 && nextPosition.y != lastPos.y || nextPosition.x != lastPos.x && nextPosition.y != lastPos.y)
+		{ 
+			if (m_board.isFigurePlaced(nextPosition) && directionX != 0)
 			{
-				if (m_board.isFigurePlaced(nextPosition) == true)
-				{
-					return false;
-					break;
-				}
-				nextPosition.x += directionX;
-				nextPosition.y += directionY;
+				return true;
 			}
-		}
-		else if (lastPosition.x > currentPosition.x && lastPosition.y > currentPosition.y)
-		{
-			while (nextPosition.x < lastPosition.x && nextPosition.y < lastPosition.y)
+			else if (m_board.isFigurePlaced(nextPosition) && directionX == 0)
 			{
-				if (m_board.isFigurePlaced(nextPosition) == true)
-				{
-					return false;
-					break;
-				}
-				nextPosition.x += directionX;
-				nextPosition.y += directionY;
+				return false;
 			}
+			nextPosition.x += directionX;
+			nextPosition.y += directionY;
 		}
-		else if (lastPosition.x < currentPosition.x && lastPosition.y > currentPosition.y)
-		{
-			while (nextPosition.x > lastPosition.x && nextPosition.y < lastPosition.y)
-			{
-				if (m_board.isFigurePlaced(nextPosition) == true)
-				{
-					return false;
-					break;
-				}
-				nextPosition.x += directionX;
-				nextPosition.y += directionY;
-			}
-		}
-		else if (lastPosition.x > currentPosition.x && lastPosition.y < currentPosition.y)
-		{
-			while (nextPosition.x < lastPosition.x && nextPosition.y > lastPosition.y)
-			{
-				if (m_board.isFigurePlaced(nextPosition) == true)
-				{
-					return false;
-					break;
-				}
-				nextPosition.x += directionX;
-				nextPosition.y += directionY;
-			}
-		}
-		else
-		{
-			return true;
-		}
-		break;
+		return true;
 	case FigureType::KING:
-		for (int i = currentPosition.x - 1; i <= currentPosition.x + 1; i++) 
+		
+		for (int i = lastPos.x - 1; i <= lastPos.x + 1; i++)
 		{
-			for (int j = currentPosition.y - 1; j <= currentPosition.y + 1; j++)
+			for (int j = lastPos.y - 1; j <= lastPos.y + 1; j++)
 			{
-				tempPosition.x = i;
-				tempPosition.y = j;
-				if (i == lastPosition.x && j == lastPosition.y) 
+				if (i >= 0 && i < 8 && j >= 0 && j < 8)
 				{
-					continue;
-				}
-				else if (i >= 0 && i < 8 && j >= 0 && j < 8 && m_board.getSquare(tempPosition)->getFigure()->getType() == FigureType::KING)
-				{
-					return false;
-				}
-				else
-				{
-					return true;
+					tempPosition.x = i;
+					tempPosition.y = j;
+					if (m_board.isFigurePlaced(tempPosition) && m_board.getSquare(tempPosition)->getFigure()->getType() == FigureType::KING
+						&& m_board.getSquare(tempPosition)->getFigure()->getFigureColor()!= m_board.getSquare(currentPos)->getFigure()->getFigureColor())
+					{
+						return false;
+					}
 				}
 			}
 		}
-		break;
+		return true;
 	default:
 		return true;
-		break;
 	}
 }
 
@@ -199,13 +178,13 @@ bool Game::figureMove(const Position& currentPosition, const Position& lastPosit
 {
 	if (m_board.isFigurePlaced(currentPosition) && m_board.isFigurePlaced(lastPosition)
 		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() != m_board.getSquare(lastPosition)->getFigure()->getFigureColor()
-		&& m_board.getSquare(currentPosition)->getFigure()->checkMove(currentPosition, lastPosition) == true && checkFreePath(currentPosition, lastPosition) == true)
+		&& m_board.getSquare(currentPosition)->getFigure()->checkMove(currentPosition, lastPosition) && checkFreePath(currentPosition, lastPosition))
 	{
 		takeOpponentFigure(currentPosition, lastPosition);
 		return true;
 	}
 	else if (m_board.isFigurePlaced(currentPosition) && !m_board.isFigurePlaced(lastPosition)
-		&& m_board.getSquare(currentPosition)->getFigure()->checkMove(currentPosition, lastPosition) == true && checkFreePath(currentPosition, lastPosition) == true)
+		&& m_board.getSquare(currentPosition)->getFigure()->checkMove(currentPosition, lastPosition) && checkFreePath(currentPosition, lastPosition))
 	{
 		m_board.getSquare(lastPosition)->setFigure(m_board.getSquare(currentPosition)->getFigure());
 		m_board.getSquare(currentPosition)->setFigure(nullptr);
@@ -216,3 +195,10 @@ bool Game::figureMove(const Position& currentPosition, const Position& lastPosit
 		return false;
 	}
 }
+
+//std::vector<Square*> Game::findSquareUnderAttak()
+//{
+//	Square square = nullptr;
+//
+//	return std::vector<Square*>();
+//}

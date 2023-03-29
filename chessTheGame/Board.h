@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "Figure.h"
 #include "Square.h"
 

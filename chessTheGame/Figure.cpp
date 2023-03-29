@@ -169,14 +169,11 @@ bool Pawn::checkMove(const Position& currentPosition, const Position& lastPositi
 
 	if (currentPosition.x + direction == lastPosition.x && currentPosition.y == lastPosition.y
 		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == WHITE_PAWN_START_POSITION_Y
-		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_Y)
+		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_Y
+		|| abs(lastPosition.x - currentPosition.x) == 1 && abs(lastPosition.y - currentPosition.y) == 1)
 	{
 		return true;
 	}
-	/*else if()
-	{
-
-	}*/
 	else
 	{
 		return false;

@@ -1,5 +1,6 @@
 #include "Board.h"
 
+
 Board::Board()
 {
 	createEmptyBoard();
@@ -45,6 +46,7 @@ bool Board::isValidCoordinates(const Position& currentPosition, const Position& 
 	}
 	else
 	{
+		std::cout << "Wrong coordinates\n";
 		return false;
 	}
 }
