@@ -35,6 +35,7 @@ public:
 	std::string getName() { return m_name; }
 	Position getCurrentPosition();
 	Position getLastPosition();
+	FigureColor getColor();
 private:
 	void convertCurrentCoordinates();
 	void convertLastCoordinates();

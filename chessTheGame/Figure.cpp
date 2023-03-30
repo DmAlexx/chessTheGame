@@ -6,6 +6,11 @@ namespace
 	const int BLACK_PAWN_START_POSITION_Y = 6;
 }
 
+bool Figure::isCanAttak(const Position& currentPosition, const Position& lastPosition)
+{
+	return true;
+}
+
 Figure::Figure(FigureColor color)
 	: m_color(color)
 {
@@ -171,6 +176,18 @@ bool Pawn::checkMove(const Position& currentPosition, const Position& lastPositi
 		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == WHITE_PAWN_START_POSITION_Y
 		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_Y
 		|| abs(lastPosition.x - currentPosition.x) == 1 && abs(lastPosition.y - currentPosition.y) == 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Pawn::isCanAttak(const Position& currentPosition, const Position& lastPosition)
+{
+	if (abs(lastPosition.x - currentPosition.x) == 1 && abs(lastPosition.y - currentPosition.y) == 1)
 	{
 		return true;
 	}

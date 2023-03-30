@@ -38,15 +38,8 @@ void UserInterface::secondMenu()
 	case 1:
 		std::cout << "Available in next versions...\n";
 		std::cout << "Press any key to continue...\n";
-		
-#ifdef _WIN32
-		_getch();
-		system("cls");
-#endif // !_WIN32
-#ifdef _linux
-		getchar();
-		system("clear");
-#endif //!_linux
+		waitForPressAnyKey();
+		clearConsole();
 		break;
 	case 2:
 		std::string gamerName;
@@ -75,7 +68,7 @@ void UserInterface::secondMenu()
 			{
 				clearConsole();
 				visual.printBoardFiguresForWhite(board);
-				std::cout << firstGamer.getName()<<" :";
+				std::cout << "Moving white, " << firstGamer.getName() << " :";
 				firstGamer.inputMoveCoordinates();
 				if (openGame.figureMove(firstGamer.getCurrentPosition(), firstGamer.getLastPosition()))
 				{
@@ -93,7 +86,7 @@ void UserInterface::secondMenu()
 			{
 				clearConsole();
 				visual.printBoardFiguresForBlack(board);
-				std::cout << secondGamer.getName()<<" :";
+				std::cout << "Moving black, " << secondGamer.getName()<<" :";
 				secondGamer.inputMoveCoordinates();
 				if (openGame.figureMove(secondGamer.getCurrentPosition(), secondGamer.getLastPosition()))
 				{

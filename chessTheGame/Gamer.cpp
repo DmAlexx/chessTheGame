@@ -79,3 +79,8 @@ Position Gamer::getCurrentPosition()
 	convertCurrentCoordinates();
 	return m_currentPosition;
 }
+
+FigureColor Gamer::getColor()
+{
+	return m_gamerFigureColor;
+}
