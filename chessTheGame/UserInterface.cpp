@@ -19,13 +19,7 @@ UserInterface::UserInterface()
 		}
 		else
 		{
-#ifdef _WIN32
-			system("cls");
-#endif // !_WIN32
-#ifdef _linux
-			system("clear");
-#endif //!_linux
-			
+			clearConsole();
 			secondMenu();
 		}
 	}
@@ -46,13 +40,12 @@ void UserInterface::secondMenu()
 		std::cout << "First gamer, enter your name : \n";
 		std::cin >> gamerName;
 		Gamer firstGamer(FigureColor::WHITE, gamerName);
-		std::cout << firstGamer.getName() << " you will play with white figures\n";
+		std::cout << firstGamer.getName() << " you will play with white figures\n\n";
 		std::cout << "Second gamer, enter your name : \n";
 		std::cin >> gamerName;
 		Gamer secondGamer(FigureColor::BLACK, gamerName);
 		std::cout << secondGamer.getName() << " you will play with black figures\n";
-		std::cout << "Press any key to continue...\n";
-		
+				
 		waitForPressAnyKey();
 		clearConsole();
 
@@ -70,17 +63,19 @@ void UserInterface::secondMenu()
 				visual.printBoardFiguresForWhite(board);
 				std::cout << "Moving white, " << firstGamer.getName() << " :";
 				firstGamer.inputMoveCoordinates();
-				if (openGame.figureMove(firstGamer.getCurrentPosition(), firstGamer.getLastPosition()))
+				if (openGame.getBoard()->getSquare(firstGamer.getCurrentPosition())->getFigure()->getFigureColor()==FigureColor::WHITE 
+					&& openGame.figureMove(firstGamer.getCurrentPosition(), firstGamer.getLastPosition()))
 				{
-					openGame.figureMove(firstGamer.getCurrentPosition(), firstGamer.getLastPosition());
+					++counter;
 				}
 				else
 				{
-					std::cout << "Can't make a move, press any key...\n";
+					if (openGame.getBoard()->getSquare(firstGamer.getCurrentPosition())->getFigure()->getFigureColor() != FigureColor::WHITE)
+					{
+						std::cout << "Wrong coordinates, moving white...\n";
+					}
 					waitForPressAnyKey();
-					--counter;
 				}
-				
 			}
 			else
 			{
@@ -90,16 +85,17 @@ void UserInterface::secondMenu()
 				secondGamer.inputMoveCoordinates();
 				if (openGame.figureMove(secondGamer.getCurrentPosition(), secondGamer.getLastPosition()))
 				{
-					openGame.figureMove(secondGamer.getCurrentPosition(), secondGamer.getLastPosition());
+					--counter;
 				}
 				else
 				{
-					std::cout << "Can't make a move, press any key...\n";
+					if (openGame.getBoard()->getSquare(firstGamer.getCurrentPosition())->getFigure()->getFigureColor() != FigureColor::BLACK)
+					{
+						std::cout << "Wrong coordinates, moving black...\n";
+					}
 					waitForPressAnyKey();
-					--counter;
 				}
 			}
-			++counter;
 		}
 		break;
 	}
@@ -117,6 +113,7 @@ void UserInterface::clearConsole()
 
 void UserInterface::waitForPressAnyKey()
 {
+	std::cout << "press any key...\n";
 #ifdef _WIN32
 	_getch();
 #endif // !_WIN32

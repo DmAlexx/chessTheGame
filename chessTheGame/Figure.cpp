@@ -6,11 +6,6 @@ namespace
 	const int BLACK_PAWN_START_POSITION_Y = 6;
 }
 
-bool Figure::isCanAttak(const Position& currentPosition, const Position& lastPosition)
-{
-	return true;
-}
-
 Figure::Figure(FigureColor color)
 	: m_color(color)
 {
@@ -38,6 +33,16 @@ King::King(FigureColor color)
 
 bool King::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool King::isCanAttak(const Position& currentPosition, const Position& lastPosition)
+{
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool King::attakAndMove(const Position& currentPosition, const Position& lastPosition)
+{
 	if (abs(currentPosition.x - lastPosition.x) <= 1 && abs(currentPosition.y - lastPosition.y) <= 1)
 	{
 		return true;
@@ -64,7 +69,16 @@ Queen::Queen(FigureColor color)
 
 bool Queen::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
+	return attakAndMove(currentPosition, lastPosition);
+}
 
+bool Queen::isCanAttak(const Position& currentPosition, const Position& lastPosition)
+{
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool Queen::attakAndMove(const Position& currentPosition, const Position& lastPosition)
+{
 	if (abs(currentPosition.x - lastPosition.x) == 0 || abs(currentPosition.y - lastPosition.y) == 0 || abs(currentPosition.x - lastPosition.x) == abs(currentPosition.y - lastPosition.y))
 	{
 		return true;
@@ -90,6 +104,16 @@ Bishop::Bishop(FigureColor color)
 }
 
 bool Bishop::checkMove(const Position& currentPosition, const Position& lastPosition)
+{
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool Bishop::isCanAttak(const Position& currentPosition, const Position& lastPosition)
+{
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool Bishop::attakAndMove(const Position& currentPosition, const Position& lastPosition)
 {
 	if (abs(currentPosition.x - lastPosition.x) == abs(currentPosition.y - lastPosition.y))
 	{
@@ -117,6 +141,16 @@ Knight::Knight(FigureColor color)
 
 bool Knight::checkMove(const Position& currentPosition, const Position& lastPosition)
 {
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool Knight::isCanAttak(const Position& currentPosition, const Position& lastPosition)
+{
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool Knight::attakAndMove(const Position& currentPosition, const Position& lastPosition)
+{
 	if (abs(currentPosition.x - lastPosition.x) == 1 && abs(currentPosition.y - lastPosition.y) == 2 || abs(currentPosition.x - lastPosition.x) == 2 && abs(currentPosition.y - lastPosition.y) == 1)
 	{
 		return true;
@@ -142,6 +176,16 @@ Rook::Rook(FigureColor color)
 }
 
 bool Rook::checkMove(const Position& currentPosition, const Position& lastPosition)
+{
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool Rook::isCanAttak(const Position& currentPosition, const Position& lastPosition)
+{
+	return attakAndMove(currentPosition, lastPosition);
+}
+
+bool Rook::attakAndMove(const Position& currentPosition, const Position& lastPosition)
 {
 	if (currentPosition.x == lastPosition.x || currentPosition.y == lastPosition.y)
 	{
@@ -174,8 +218,7 @@ bool Pawn::checkMove(const Position& currentPosition, const Position& lastPositi
 
 	if (currentPosition.x + direction == lastPosition.x && currentPosition.y == lastPosition.y
 		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == WHITE_PAWN_START_POSITION_Y
-		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_Y
-		|| abs(lastPosition.x - currentPosition.x) == 1 && abs(lastPosition.y - currentPosition.y) == 1)
+		|| currentPosition.x + direction * 2 == lastPosition.x && currentPosition.y == lastPosition.y && currentPosition.x == BLACK_PAWN_START_POSITION_Y)
 	{
 		return true;
 	}

@@ -26,5 +26,6 @@ protected:
 	void secondMenu();
 	void clearConsole();
 	void waitForPressAnyKey();
+	//void logicForGamer();
 };
 
