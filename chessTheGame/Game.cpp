@@ -15,15 +15,14 @@ Game::~Game()
 
 void Game::figuresArrangement()
 {
-
 	m_board.createEmptyBoard();
 
 	// Add white figures to the board
 	createFigure(FigureType::ROOK, FigureColor::WHITE, { 0,0 });
 	createFigure(FigureType::KNIGHT, FigureColor::WHITE, { 0,1 });
 	createFigure(FigureType::BISHOP, FigureColor::WHITE, { 0,2 });
-	createFigure(FigureType::QUEEN, FigureColor::WHITE, { 0,3 });
-	createFigure(FigureType::KING, FigureColor::WHITE, { 0,4 });
+	createFigure(FigureType::KING, FigureColor::WHITE, { 0,3 });
+	createFigure(FigureType::QUEEN, FigureColor::WHITE, { 0,4 });
 	createFigure(FigureType::BISHOP, FigureColor::WHITE, { 0,5 });
 	createFigure(FigureType::KNIGHT, FigureColor::WHITE, { 0,6 });
 	createFigure(FigureType::ROOK, FigureColor::WHITE, { 0,7 });
@@ -36,8 +35,8 @@ void Game::figuresArrangement()
 	createFigure(FigureType::ROOK, FigureColor::BLACK, { 7,0 });
 	createFigure(FigureType::KNIGHT, FigureColor::BLACK, { 7,1 });
 	createFigure(FigureType::BISHOP, FigureColor::BLACK, { 7,2 });
-	createFigure(FigureType::QUEEN, FigureColor::BLACK, { 7,3 });
-	createFigure(FigureType::KING, FigureColor::BLACK, { 7,4 });
+	createFigure(FigureType::KING, FigureColor::BLACK, { 7,3 });
+	createFigure(FigureType::QUEEN, FigureColor::BLACK, { 7,4 });
 	createFigure(FigureType::BISHOP, FigureColor::BLACK, { 7,5 });
 	createFigure(FigureType::KNIGHT, FigureColor::BLACK, { 7,6 });
 	createFigure(FigureType::ROOK, FigureColor::BLACK, { 7,7 });
@@ -89,7 +88,7 @@ bool Game::checkFreePath(const Position& currentPos, const Position& lastPos)
 	int directionY = (lastPos.y > currentPos.y) ? 1 : ((lastPos.y < currentPos.y) ? -1 : 0);
 	nextPosition.x = currentPos.x + directionX;
 	nextPosition.y = currentPos.y + directionY;
-	std::cout << "Вызвал функцию checkFreePath\n";
+	
 
 	switch (figure)
 	{
@@ -97,21 +96,24 @@ bool Game::checkFreePath(const Position& currentPos, const Position& lastPos)
 	case FigureType::QUEEN:
 		while (nextPosition.x != lastPos.x || nextPosition.y != lastPos.y)
 		{
-			return countNextPosition(nextPosition, directionX, directionY);
+			if (m_board.isFigurePlaced(nextPosition))
+			{
+				return false;
+			}
+			nextPosition.x += directionX;
+			nextPosition.y += directionY;
 		}
 		return true;
 	case FigureType::BISHOP:
-		while (nextPosition.x != lastPos.x && nextPosition.y != lastPos.y)
-		{
-			return countNextPosition(nextPosition, directionX, directionY);
-		}
-		return true;
-
 	case FigureType::PAWN:
-
 		while (nextPosition.x != lastPos.x && nextPosition.y != lastPos.y)
 		{
-			return countNextPosition(nextPosition, directionX, directionY);
+			if (m_board.isFigurePlaced(nextPosition))
+			{
+				return false;
+			}
+			nextPosition.x += directionX;
+			nextPosition.y += directionY;
 		}
 		return true;
 	default:
@@ -119,51 +121,122 @@ bool Game::checkFreePath(const Position& currentPos, const Position& lastPos)
 	}
 }
 
-void Game::takeOpponentFigure(const Position& currentPosition, const Position& lastPosition)
+void Game::makeMove(const Position& currentPosition, const Position& lastPosition)
 {
-	m_tokenFigures.push_back(m_board.getSquare(lastPosition)->getFigure());
+	changeKingsCoordinatesLog(currentPosition, lastPosition);
 	m_board.getSquare(lastPosition)->setFigure(m_board.getSquare(currentPosition)->getFigure());
 	m_board.getSquare(currentPosition)->setFigure(nullptr);
+	movesLogging(currentPosition, lastPosition);
+}
+
+void Game::takeOpponentFigure(const Position& currentPosition, const Position& lastPosition)
+{
+	m_tokenFigures.push(m_board.getSquare(lastPosition)->getFigure());
+	makeMove(currentPosition, lastPosition);
+}
+
+void Game::replaceTheCapturedFigure()
+{
+	m_board.getSquare(m_movesLog.top().second)->setFigure(m_tokenFigures.top());
+	m_tokenFigures.pop();
+	if (m_switchTakeOpponentFigure == 1)
+	{
+		m_movesLog.pop();
+		m_switchTakeOpponentFigure = 0;
+	}
+}
+
+void Game::takeBackLastMove()
+{
+	changeKingsCoordinatesLog(m_movesLog.top().second, m_movesLog.top().first);
+	m_board.getSquare(m_movesLog.top().first)->setFigure(m_board.getSquare(m_movesLog.top().second)->getFigure());
+	m_board.getSquare(m_movesLog.top().second)->setFigure(nullptr);
+	if (m_switchTakeOpponentFigure == 0)
+	{
+		m_movesLog.pop();
+	}
 }
 
 bool Game::figureMove(const Position& currentPosition, const Position& lastPosition)
 {
-	std::cout << "вызвал функцию figureMove\n";
-	_getch();
+	//attack opponent figure
 	if (m_board.isFigurePlaced(currentPosition) && m_board.isFigurePlaced(lastPosition)
 		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() != m_board.getSquare(lastPosition)->getFigure()->getFigureColor()
 		&& m_board.getSquare(currentPosition)->getFigure()->isCanAttak(currentPosition, lastPosition)
 		&& checkFreePath(currentPosition, lastPosition))
 	{
-		if (m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && isKingUnderAttakAfterHisMove(currentPosition, lastPosition))
+		takeOpponentFigure(currentPosition, lastPosition);
+		m_switchTakeOpponentFigure = 1;
+		for (int i = 0; i < NUMBER_OF_KINGS; ++i)
 		{
-			std::cout << "Wrong move, King will be under attack!\n";
-			return false;
+			if (m_board.getSquare(lastPosition)->getFigure()->getFigureColor() == m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor()
+				&& isKingUnderAttakAfterMove(i))
+			{
+				if (m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "Can't make a move! Black King under attack!\n";
+				}
+				else
+				{
+					std::cout << "Can't make a move! White King under attack!\n";
+				}
+				takeBackLastMove();
+				replaceTheCapturedFigure();
+				return false;
+			}
+			else if (m_board.getSquare(lastPosition)->getFigure()->getFigureColor() != m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor()
+				&& isKingUnderAttakAfterMove(i))
+			{
+				if (m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "Check for black King!\n";
+				}
+				else
+				{
+					std::cout << "Check for white King!\n";
+				}
+				return true;
+			}
 		}
-		else
-		{
-			std::cout << "побил\n";
-			_getch();
-			takeOpponentFigure(currentPosition, lastPosition);
-			return true;
-		}
+		return true;
 	}
+	//figure move
 	else if (m_board.isFigurePlaced(currentPosition) && !m_board.isFigurePlaced(lastPosition) && m_board.getSquare(currentPosition)->getFigure()->checkMove(currentPosition, lastPosition) && checkFreePath(currentPosition, lastPosition))
 	{
-		std::cout << "попал в нужнфй блок при ходе\n";
-		if (m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && isKingUnderAttakAfterHisMove(currentPosition, lastPosition))
+		makeMove(currentPosition, lastPosition);
+		for (int i = 0; i < NUMBER_OF_KINGS; ++i)
 		{
-			std::cout << "Wrong move, King will be under attack!\n";
-			return false;
+			if (m_board.getSquare(lastPosition)->getFigure()->getFigureColor() == m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor()
+				&& isKingUnderAttakAfterMove(i))
+			{
+				if (m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "Can't make a move! Black King under attack!\n";
+				}
+				else
+				{
+					std::cout << "Can't make a move! White King under attack!\n";
+				}
+				takeBackLastMove();
+				return false;
+			}
+			else if (m_board.getSquare(lastPosition)->getFigure()->getFigureColor() != m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor()
+				&& isKingUnderAttakAfterMove(i))
+			{
+				if (m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor() == FigureColor::BLACK)
+				{
+					std::cout << "Check for black King!\n";
+					waitForPressAnyKey();
+				}
+				else
+				{
+					std::cout << "Check for white King!\n";
+					waitForPressAnyKey();
+				}
+				return true;
+			}
 		}
-		else
-		{
-			std::cout << "фигура походила\n";
-			_getch();
-			m_board.getSquare(lastPosition)->setFigure(m_board.getSquare(currentPosition)->getFigure());
-			m_board.getSquare(currentPosition)->setFigure(nullptr);
-			return true;
-		}
+		return true;
 	}
 	else
 	{
@@ -172,68 +245,19 @@ bool Game::figureMove(const Position& currentPosition, const Position& lastPosit
 	}
 }
 
-bool Game::isKingUnderAttakAfterHisMove(const Position& currentPos, const Position& lastPos)
+bool Game::isKingUnderAttakAfterMove(const int whiteOrBlack)
 {
 	Position virtualFigurePosition;
 
-	for (int i = 0; i < LAST_COORD_OF_BOARD; ++i)
+	for (int i = (LAST_COORD_OF_BOARD - 1); i > -1; --i)
 	{
-		for (int j = 0; j < LAST_COORD_OF_BOARD; ++j)
+		for (int j = (LAST_COORD_OF_BOARD - 1); j > -1; --j)
 		{
-			virtualFigurePosition.x = i;
-			virtualFigurePosition.y = j;
-			if (m_board.getSquare(currentPos)->getFigure()->getType() == FigureType::KING && m_board.isFigurePlaced(virtualFigurePosition)
-				&& m_board.getSquare(currentPos)->getFigure()->getFigureColor() != m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor()
-				&& m_board.getSquare(virtualFigurePosition)->getFigure()->isCanAttak(virtualFigurePosition, lastPos) && checkFreePath(virtualFigurePosition, lastPos))
+			virtualFigurePosition.x = j;
+			virtualFigurePosition.y = i;
+			if (m_board.isFigurePlaced(virtualFigurePosition) && m_board.getSquare(m_kingsKoordinates[whiteOrBlack])->getFigure()->getFigureColor() != m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor()
+				&& m_board.getSquare(virtualFigurePosition)->getFigure()->isCanAttak(virtualFigurePosition, m_kingsKoordinates[whiteOrBlack]) && checkFreePath(virtualFigurePosition, m_kingsKoordinates[whiteOrBlack]))
 			{
-				if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::BISHOP && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
-				{
-					std::cout << "WB";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::BISHOP && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::BLACK)
-				{
-					std::cout << "BB";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
-				{
-					std::cout << "WK";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::BLACK)
-				{
-					std::cout << "BK";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::KNIGHT && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
-				{
-					std::cout << "Wk";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::KNIGHT && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::BLACK)
-				{
-					std::cout << "Bk";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::PAWN && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
-				{
-					std::cout << "WP";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::PAWN && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::BLACK)
-				{
-					std::cout << "BP";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::QUEEN && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
-				{
-					std::cout << "WQ";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::QUEEN && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::BLACK)
-				{
-					std::cout << "BQ";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::ROOK && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
-				{
-					std::cout << "WR";
-				}
-				else if (m_board.getSquare(virtualFigurePosition)->getFigure()->getType() == FigureType::ROOK && m_board.getSquare(virtualFigurePosition)->getFigure()->getFigureColor() == FigureColor::BLACK)
-				{
-					std::cout << "BR";
-				}
 				return true;
 			}
 		}
@@ -241,47 +265,30 @@ bool Game::isKingUnderAttakAfterHisMove(const Position& currentPos, const Positi
 	return false;
 }
 
-bool Game::isCheckForKingAfterMoveOtherFigures(const Position& currentPos, const Position& lastPos)
+void Game::movesLogging(const Position& currentPosition, const Position& lastPosition)
 {
-	Position tempPosition;
-	for (int i = FIRST_COORD_OF_BOARD; i < LAST_COORD_OF_BOARD; ++i)
-	{
-		for (int j = FIRST_COORD_OF_BOARD; j < LAST_COORD_OF_BOARD; ++j)
-		{
-			tempPosition.x = i;
-			tempPosition.y = j;
-
-			if (m_board.isFigurePlaced(tempPosition) && m_board.getSquare(tempPosition)->getFigure()->getFigureColor() != m_board.getSquare(currentPos)->getFigure()->getFigureColor()
-				&& m_board.getSquare(tempPosition)->getFigure()->getType() == FigureType::KING
-				&& m_board.getSquare(lastPos)->getFigure()->checkMove(lastPos, tempPosition) && m_board.getSquare(lastPos)->getFigure()->isCanAttak(lastPos, tempPosition)
-				&& checkFreePath(lastPos, tempPosition))
-			{
-				std::string figureColor;
-				std::string figureType = "King";
-
-				if (m_board.getSquare(tempPosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
-				{
-					figureColor = "white";
-				}
-				else
-				{
-					figureColor = "black";
-				}
-
-				std::cout << "Check for " << figureColor << " " << figureType << "\n";
-				return true;
-			}
-		}
-	}
-	return false;
+	m_movesLog.push(std::make_pair(currentPosition, lastPosition));
 }
 
-bool Game::countNextPosition(Position& nextPosition, const int directionX, const int directionY)
+void Game::changeKingsCoordinatesLog(const Position& currentPosition, const Position& lastPosition)
 {
-	if (m_board.isFigurePlaced(nextPosition))
+	if (m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(currentPosition)->getFigure()->getFigureColor()==FigureColor::WHITE)
 	{
-		return false;
+		m_kingsKoordinates[0] = lastPosition;
 	}
-	nextPosition.x += directionX;
-	nextPosition.y += directionY;
+	else if (m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(currentPosition)->getFigure()->getFigureColor() != FigureColor::WHITE)
+	{
+		m_kingsKoordinates[1] = lastPosition;
+	}
+}
+
+void Game::waitForPressAnyKey()
+{
+	std::cout << "press any key...\n";
+#ifdef _WIN32
+	_getch();
+#endif // !_WIN32
+#ifdef _linux
+	getchar();
+#endif //!_linux
 }

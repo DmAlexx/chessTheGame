@@ -8,18 +8,18 @@ Visual::Visual()
 void Visual::printBoardFiguresForWhite(Board* board) const
 {
 	Position tempPosition;
+	std::cout << "\n\n";
+	std::cout << "     a  b  c  d  e  f  g  h\n";
 	for (int i = (LAST_COORD_OF_BOARD - 1); i > - 1; --i)
 	{
+		std::cout << "   " << i + 1;
 		for (int j = (LAST_COORD_OF_BOARD - 1); j > -1; --j)
 		{
-			tempPosition.y = j;
-			tempPosition.x = i;
-			std::cout << SEPARATOR;
-			fillBoardWithFigures(tempPosition, board);
+			fillBoardWithFigures(tempPosition, board, i, j);
 		}
-		std::cout << " " << i+1 << std::endl;
+		std::cout << " " << i + 1 << std::endl;
 	}
-	std::cout << " a  b  c  d  e  f  g  h\n\n\n";
+	std::cout << "     a  b  c  d  e  f  g  h\n\n\n";
 }
 
 void Visual::printBoardFiguresForBlack(Board* board) const
@@ -29,25 +29,25 @@ void Visual::printBoardFiguresForBlack(Board* board) const
 	{
 		for (int j = 0; j< LAST_COORD_OF_BOARD; ++j)
 		{
-			tempPosition.y = j;
-			tempPosition.x = i;
-			std::cout << SEPARATOR;
-			fillBoardWithFigures(tempPosition, board);
+			fillBoardWithFigures(tempPosition, board, i, j);
 		}
 		std::cout << " " << 1+i << std::endl;
 	}
 	std::cout << " h  g  f  e  d  c  b  a\n\n\n";
 }
 
-void Visual::fillBoardWithFigures(Position tempPosition, Board* board) const
+void Visual::fillBoardWithFigures(Position tempPosition, Board* board, int i, int j) const
 {
+	tempPosition.y = j;
+	tempPosition.x = i;
+	std::cout << SEPARATOR;
 	if (board->getSquare(tempPosition)->getSquareColor() == SquareColor::BLACK && !board->isFigurePlaced(tempPosition))
 	{
 		std::cout << "X ";
 	}
 	else if (board->getSquare(tempPosition)->getSquareColor() == SquareColor::WHITE && !board->isFigurePlaced(tempPosition))
 	{
-		std::cout << EMPTY_FILLER << EMPTY_FILLER;
+		std::cout << " " <<  " ";
 	}
 	else
 	{

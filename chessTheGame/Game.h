@@ -4,10 +4,21 @@
 #include "Square.h"
 #include <vector>
 #include <string>
-#include <map>
+#include <stack>
+#include <utility>
 
-
+#ifdef _WIN32
 #include <conio.h>
+#endif // !_WIN32
+
+#ifdef _linux
+#include <termios.h>
+#endif // !_linux
+
+namespace
+{
+	const int NUMBER_OF_KINGS = 2;
+}
 
 class Game
 {
@@ -16,18 +27,26 @@ public:
 	~Game();
 	void figuresArrangement();
 	bool figureMove(const Position& currentPos, const Position& lastPos);
-	bool isCheckForKingAfterMoveOtherFigures(const Position& currentPos, const Position& lastPos);
+	void takeBackLastMove();
 	Board* getBoard() { return &m_board; }
 	
 
 private:
 	void createFigure(FigureType type, FigureColor color, const Position& position);
 	void takeOpponentFigure(const Position& currentPosition, const Position& lastPosition);
-	bool isKingUnderAttakAfterHisMove(const Position& currentPos, const Position& lastPos);
+	bool isKingUnderAttakAfterMove(const int whiteOrBlack);
 	bool checkFreePath(const Position& currentPosition, const Position& lastPosition);
-	bool countNextPosition(Position& nextPosition, const int directionX, const int directionY);
+	void replaceTheCapturedFigure();
+	void movesLogging(const Position& currentPosition, const Position& lastPosition);
+	void changeKingsCoordinatesLog(const Position& currentPosition, const Position& lastPosition);
+	void makeMove(const Position& currentPosition, const Position& lastPosition);
+	void waitForPressAnyKey();
+	
 	std::vector<Figure*> m_figures;
-	std::vector<Figure*> m_tokenFigures;
+	std::stack<std::pair<Position, Position>> m_movesLog;
+	std::stack<Figure*> m_tokenFigures;
+	Position m_kingsKoordinates[NUMBER_OF_KINGS] = { {0,3}, {7,3} }; // [0] - white , [1] - black
 	Board m_board;
+	int m_switchTakeOpponentFigure = 0; //0 - last coordinats in log without take opponent figure, 1 - with
 };
 

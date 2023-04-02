@@ -26,6 +26,6 @@ protected:
 	void secondMenu();
 	void clearConsole();
 	void waitForPressAnyKey();
-	//void logicForGamer();
+	void gamerMove(int& counter, Game& openGame, Gamer& gamer, const Visual& visual, Board* board);
 };
 

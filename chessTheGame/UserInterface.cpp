@@ -37,11 +37,11 @@ void UserInterface::secondMenu()
 		break;
 	case 2:
 		std::string gamerName;
-		std::cout << "First gamer, enter your name : \n";
+		std::cout << "First player, enter your name : \n";
 		std::cin >> gamerName;
 		Gamer firstGamer(FigureColor::WHITE, gamerName);
 		std::cout << firstGamer.getName() << " you will play with white figures\n\n";
-		std::cout << "Second gamer, enter your name : \n";
+		std::cout << "Second player, enter your name : \n";
 		std::cin >> gamerName;
 		Gamer secondGamer(FigureColor::BLACK, gamerName);
 		std::cout << secondGamer.getName() << " you will play with black figures\n";
@@ -54,52 +54,62 @@ void UserInterface::secondMenu()
 		int counter = 0;
 		openGame.figuresArrangement();
 		Visual visual;
-		
+		int switchForKingCheck = 0;
 		while (true)
 		{
+			clearConsole();
 			if (counter % 2 == 0)
 			{
-				clearConsole();
-				visual.printBoardFiguresForWhite(board);
-				std::cout << "Moving white, " << firstGamer.getName() << " :";
-				firstGamer.inputMoveCoordinates();
-				if (openGame.getBoard()->getSquare(firstGamer.getCurrentPosition())->getFigure()->getFigureColor()==FigureColor::WHITE 
-					&& openGame.figureMove(firstGamer.getCurrentPosition(), firstGamer.getLastPosition()))
-				{
-					++counter;
-				}
-				else
-				{
-					if (openGame.getBoard()->getSquare(firstGamer.getCurrentPosition())->getFigure()->getFigureColor() != FigureColor::WHITE)
-					{
-						std::cout << "Wrong coordinates, moving white...\n";
-					}
-					waitForPressAnyKey();
-				}
+				gamerMove(counter, openGame, firstGamer, visual, board);
 			}
 			else
 			{
-				clearConsole();
-				visual.printBoardFiguresForBlack(board);
-				std::cout << "Moving black, " << secondGamer.getName()<<" :";
-				secondGamer.inputMoveCoordinates();
-				if (openGame.figureMove(secondGamer.getCurrentPosition(), secondGamer.getLastPosition()))
-				{
-					--counter;
-				}
-				else
-				{
-					if (openGame.getBoard()->getSquare(firstGamer.getCurrentPosition())->getFigure()->getFigureColor() != FigureColor::BLACK)
-					{
-						std::cout << "Wrong coordinates, moving black...\n";
-					}
-					waitForPressAnyKey();
-				}
+				gamerMove(counter, openGame, secondGamer, visual, board);
 			}
 		}
 		break;
 	}
 }
+
+	void UserInterface::gamerMove(int& counter, Game& openGame, Gamer& gamer, const Visual& visual, Board* board)
+	{
+		std::string figureColorOutput;
+		if (counter % 2 == 0)
+		{
+			figureColorOutput = "white";
+			visual.printBoardFiguresForWhite(board);
+		}
+		else 
+		{
+			figureColorOutput = "black";
+			visual.printBoardFiguresForWhite(board);
+		}
+		std::cout << "Moving "<< figureColorOutput << ", " << gamer.getName() << ": ";
+		gamer.inputMoveCoordinates();
+		
+		if (counter % 2 == 0 && openGame.getBoard()->getSquare(gamer.getCurrentPosition())->getFigure()->getFigureColor() == FigureColor::WHITE
+			&& openGame.figureMove(gamer.getCurrentPosition(), gamer.getLastPosition()))
+		{
+			++counter;
+		}
+		else if (counter % 2 != 0 && openGame.getBoard()->getSquare(gamer.getCurrentPosition())->getFigure()->getFigureColor() == FigureColor::BLACK
+			&& openGame.figureMove(gamer.getCurrentPosition(), gamer.getLastPosition()))
+		{
+			--counter;
+		}
+		else
+		{
+			if (counter % 2 == 0 && openGame.getBoard()->getSquare(gamer.getCurrentPosition())->getFigure()->getFigureColor() != FigureColor::WHITE)
+			{
+				std::cout << "Wrong coordinates, moving white...\n";
+			}
+			else if (counter % 2 != 0 && openGame.getBoard()->getSquare(gamer.getCurrentPosition())->getFigure()->getFigureColor() == FigureColor::WHITE)
+			{
+				std::cout << "Wrong coordinates, moving black...\n";
+			}
+			waitForPressAnyKey();
+		}
+	}
 
 void UserInterface::clearConsole()
 {
