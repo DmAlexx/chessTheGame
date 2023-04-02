@@ -16,32 +16,15 @@ void Gamer::inputMoveCoordinates()
 
 void Gamer::convertCurrentCoordinates()
 {
-	for (int i = 0; i < 2; ++i)
-	{
-		if (i == 0)
-		{
-			for (auto& coord : convertCoordinatesTableChar)
-			{
-				if (m_initialCurrentCoordinates[i] == coord.first)
-				{
-					m_currentPosition.y = coord.second;
-				}
-			}
-		}
-		else
-		{
-			for (auto& coord : convertCoordinatesTableNumbers)
-			{
-				if (m_initialCurrentCoordinates[i] == coord.first)
-				{
-					m_currentPosition.x = coord.second;
-				}
-			}
-		}
-	}
+	converterCoordinates(m_currentPosition, m_initialCurrentCoordinates);
 }
 
 void Gamer::convertLastCoordinates()
+{
+	converterCoordinates(m_lastPosition, m_initialLastCoordinates);
+}
+
+void Gamer::converterCoordinates(Position& currentOrLastPosition, std::string& initialCurrentOrLastCoordinates)
 {
 	for (int i = 0; i < 2; ++i)
 	{
@@ -49,9 +32,9 @@ void Gamer::convertLastCoordinates()
 		{
 			for (auto& coord : convertCoordinatesTableChar)
 			{
-				if (m_initialLastCoordinates[i] == coord.first)
+				if (initialCurrentOrLastCoordinates[i] == coord.first)
 				{
-					m_lastPosition.y = coord.second;
+					currentOrLastPosition.y = coord.second;
 				}
 			}
 		}
@@ -59,9 +42,9 @@ void Gamer::convertLastCoordinates()
 		{
 			for (auto& coord : convertCoordinatesTableNumbers)
 			{
-				if (m_initialLastCoordinates[i] == coord.first)
+				if (initialCurrentOrLastCoordinates[i] == coord.first)
 				{
-					m_lastPosition.x = coord.second;
+					currentOrLastPosition.x = coord.second;
 				}
 			}
 		}

@@ -43,6 +43,7 @@ public:
 private:
 	void convertCurrentCoordinates();
 	void convertLastCoordinates();
+	void converterCoordinates(Position& currentOrLastPosition, std::string& initialCurrentOrLastCoordinates);
 	std::string m_name;
 	std::string m_initialCurrentCoordinates;
 	std::string m_initialLastCoordinates;
