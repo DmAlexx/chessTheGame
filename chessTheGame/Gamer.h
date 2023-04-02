@@ -7,15 +7,7 @@
 
 namespace
 {
-	const std::map<char, int> convertCoordinatesTable = {
-		{'1',0 },
-		{'2',1 },
-		{'3',2 },
-		{'4',3 },
-		{'5',4 },
-		{'6',5 },
-		{'7',6 },
-		{'8',7 },
+	const std::map<char, int> convertCoordinatesTableChar = {
 		{'h',0 },
 		{'g',1 },
 		{'f',2 },
@@ -25,6 +17,18 @@ namespace
 		{'b',6 },
 		{'a',7 }
 	};
+
+	const std::map<char, int> convertCoordinatesTableNumbers = {
+		{'1',0 },
+		{'2',1 },
+		{'3',2 },
+		{'4',3 },
+		{'5',4 },
+		{'6',5 },
+		{'7',6 },
+		{'8',7 },
+	};
+
 }
 
 class Gamer

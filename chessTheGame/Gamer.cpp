@@ -20,7 +20,7 @@ void Gamer::convertCurrentCoordinates()
 	{
 		if (i == 0)
 		{
-			for (auto& coord : convertCoordinatesTable)
+			for (auto& coord : convertCoordinatesTableChar)
 			{
 				if (m_initialCurrentCoordinates[i] == coord.first)
 				{
@@ -30,7 +30,7 @@ void Gamer::convertCurrentCoordinates()
 		}
 		else
 		{
-			for (auto& coord : convertCoordinatesTable)
+			for (auto& coord : convertCoordinatesTableNumbers)
 			{
 				if (m_initialCurrentCoordinates[i] == coord.first)
 				{
@@ -47,7 +47,7 @@ void Gamer::convertLastCoordinates()
 	{
 		if (i == 0)
 		{
-			for (auto& coord : convertCoordinatesTable)
+			for (auto& coord : convertCoordinatesTableChar)
 			{
 				if (m_initialLastCoordinates[i] == coord.first)
 				{
@@ -57,7 +57,7 @@ void Gamer::convertLastCoordinates()
 		}
 		else
 		{
-			for (auto& coord : convertCoordinatesTable)
+			for (auto& coord : convertCoordinatesTableNumbers)
 			{
 				if (m_initialLastCoordinates[i] == coord.first)
 				{
@@ -67,6 +67,7 @@ void Gamer::convertLastCoordinates()
 		}
 	}
 }
+
 
 Position Gamer::getLastPosition()
 {

@@ -190,10 +190,12 @@ bool Game::figureMove(const Position& currentPosition, const Position& lastPosit
 				if (m_board.getSquare(m_kingsKoordinates[i])->getFigure()->getFigureColor() == FigureColor::BLACK)
 				{
 					std::cout << "Check for black King!\n";
+					waitForPressAnyKey();
 				}
 				else
 				{
 					std::cout << "Check for white King!\n";
+					waitForPressAnyKey();
 				}
 				return true;
 			}

@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include <cstdlib>
+//#include <cstdlib>
 #include "Visual.h"
 #include "Gamer.h"
 #include "Game.h"
