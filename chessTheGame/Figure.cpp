@@ -53,6 +53,18 @@ bool King::attakAndMove(const Position& currentPosition, const Position& lastPos
 	}
 }
 
+bool King::isCanCastling(const Position& currentPosition, const Position& lastPosition)
+{
+	if (currentPosition.x == lastPosition.x && abs(currentPosition.y - lastPosition.y) == 2)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}	
+}
+
 const FigureType& King::getType()
 {
 	return FigureType::KING;

@@ -38,15 +38,24 @@ private:
 	bool checkFreePath(const Position& currentPosition, const Position& lastPosition);
 	void replaceTheCapturedFigure();
 	void movesLogging(const Position& currentPosition, const Position& lastPosition);
-	void changeKingsCoordinatesLog(const Position& currentPosition, const Position& lastPosition);
+	void changeKingsCoordinatesLog(const Position& currentPosition, const Position& lastPosition, const int switchKing);
 	void makeMove(const Position& currentPosition, const Position& lastPosition);
 	void waitForPressAnyKey();
-	
+	void isRooksMoved(const Position& currentPosition, const Position& lastPosition);
+	void castling(const Position& currentPosition, const Position& lastPosition);
+	void moveRookIfCastling(const Position& currentPosition, const Position& lastPosition);
+
 	std::vector<Figure*> m_figures;
 	std::stack<std::pair<Position, Position>> m_movesLog;
 	std::stack<Figure*> m_tokenFigures;
 	Position m_kingsKoordinates[NUMBER_OF_KINGS] = { {0,3}, {7,3} }; // [0] - white , [1] - black
 	Board m_board;
 	int m_switchTakeOpponentFigure = 0; //0 - last coordinats in log without take opponent figure, 1 - with
+	int m_switchIfWhiteKingMoved = 0; //0 - don't move, 1 - had moved
+	int m_switchIfBlackKingMoved = 0; //0 - don't move, 1 - had moved
+	int m_switchIfWhiteRightRookMoved = 0; //0 - don't move, 1 - had moved
+	int m_switchIfWhiteLeftRookMoved = 0; //0  don't move, 1 - had moved
+	int m_switchIfBlackRightRookMoved = 0; //0 - don't move, 1 - had moved
+	int m_switchIfBlackLeftRookMoved = 0; //0 - don't move, 1 - had moved
 };
 

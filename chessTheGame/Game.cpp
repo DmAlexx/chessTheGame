@@ -123,7 +123,9 @@ bool Game::checkFreePath(const Position& currentPos, const Position& lastPos)
 
 void Game::makeMove(const Position& currentPosition, const Position& lastPosition)
 {
-	changeKingsCoordinatesLog(currentPosition, lastPosition);
+	castling(currentPosition, lastPosition);
+	isRooksMoved(currentPosition, lastPosition);
+	changeKingsCoordinatesLog(currentPosition, lastPosition, 1);
 	m_board.getSquare(lastPosition)->setFigure(m_board.getSquare(currentPosition)->getFigure());
 	m_board.getSquare(currentPosition)->setFigure(nullptr);
 	movesLogging(currentPosition, lastPosition);
@@ -148,7 +150,7 @@ void Game::replaceTheCapturedFigure()
 
 void Game::takeBackLastMove()
 {
-	changeKingsCoordinatesLog(m_movesLog.top().second, m_movesLog.top().first);
+	changeKingsCoordinatesLog(m_movesLog.top().second, m_movesLog.top().first, -1);
 	m_board.getSquare(m_movesLog.top().first)->setFigure(m_board.getSquare(m_movesLog.top().second)->getFigure());
 	m_board.getSquare(m_movesLog.top().second)->setFigure(nullptr);
 	if (m_switchTakeOpponentFigure == 0)
@@ -203,7 +205,8 @@ bool Game::figureMove(const Position& currentPosition, const Position& lastPosit
 		return true;
 	}
 	//figure move
-	else if (m_board.isFigurePlaced(currentPosition) && !m_board.isFigurePlaced(lastPosition) && m_board.getSquare(currentPosition)->getFigure()->checkMove(currentPosition, lastPosition) && checkFreePath(currentPosition, lastPosition))
+	else if (m_board.isFigurePlaced(currentPosition) && !m_board.isFigurePlaced(lastPosition) && (m_board.getSquare(currentPosition)->getFigure()->checkMove(currentPosition, lastPosition) || m_board.getSquare(currentPosition)->getFigure()->isCanCastling (currentPosition, lastPosition)) 
+		&& checkFreePath(currentPosition, lastPosition))
 	{
 		makeMove(currentPosition, lastPosition);
 		for (int i = 0; i < NUMBER_OF_KINGS; ++i)
@@ -272,16 +275,93 @@ void Game::movesLogging(const Position& currentPosition, const Position& lastPos
 	m_movesLog.push(std::make_pair(currentPosition, lastPosition));
 }
 
-void Game::changeKingsCoordinatesLog(const Position& currentPosition, const Position& lastPosition)
+void Game::changeKingsCoordinatesLog(const Position& currentPosition, const Position& lastPosition, const int switchKing)
 {
-	if (m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(currentPosition)->getFigure()->getFigureColor()==FigureColor::WHITE)
+	if (m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(currentPosition)->getFigure()->getFigureColor()==FigureColor::WHITE)
 	{
 		m_kingsKoordinates[0] = lastPosition;
+		m_switchIfWhiteKingMoved+= switchKing;
 	}
-	else if (m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(currentPosition)->getFigure()->getFigureColor() != FigureColor::WHITE)
+	else if (m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING && m_board.getSquare(currentPosition)->getFigure()->getFigureColor() != FigureColor::WHITE)
 	{
 		m_kingsKoordinates[1] = lastPosition;
+		m_switchIfBlackKingMoved+= switchKing;
 	}
+}
+
+void Game::isRooksMoved(const Position& currentPosition, const Position& lastPosition)
+{
+	if (currentPosition.x == 0 && currentPosition.y == 0 && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::ROOK
+		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
+	{
+		m_switchIfWhiteRightRookMoved = 1;
+	}
+	else if (currentPosition.x == 0 && currentPosition.y == 7 && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::ROOK
+		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
+	{
+		m_switchIfWhiteRightRookMoved = 1;
+	}
+	else if (currentPosition.x == 7 && currentPosition.y == 0 && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::ROOK
+		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
+	{
+		m_switchIfBlackRightRookMoved = 1;
+	}
+	else if (currentPosition.x == 7 && currentPosition.y == 7 && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::ROOK
+		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
+	{
+		m_switchIfBlackLeftRookMoved = 1;
+	}
+		
+}
+
+void Game::castling(const Position& currentPosition, const Position& lastPosition)
+{
+	Position tempCurrentRookPosition;
+	Position tempLastRookPosition;
+
+	if (m_switchIfWhiteKingMoved != 1 && m_switchIfWhiteRightRookMoved!=1 && m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING
+		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::WHITE && lastPosition.x == 0 && lastPosition.y == 1 && !isKingUnderAttakAfterMove(0))
+	{
+		tempCurrentRookPosition.x = 0;
+		tempCurrentRookPosition.y = 0;
+		tempLastRookPosition.x = 0;
+		tempLastRookPosition.y = 2;
+		moveRookIfCastling(tempCurrentRookPosition, tempLastRookPosition);
+	}
+	else if (m_switchIfWhiteKingMoved != 1 && m_switchIfWhiteLeftRookMoved != 1 && m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING &&
+		m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::WHITE && lastPosition.x == 0 && lastPosition.y == 5 && !isKingUnderAttakAfterMove(0))
+	{
+		tempCurrentRookPosition.x = 0;
+		tempCurrentRookPosition.y = 7;
+		tempLastRookPosition.x = 0;
+		tempLastRookPosition.y = 4;
+		moveRookIfCastling(tempCurrentRookPosition, tempLastRookPosition);
+	}
+	else if (m_switchIfBlackKingMoved != 1 && m_switchIfWhiteLeftRookMoved != 1 && m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING &&
+		m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::BLACK && lastPosition.x == 7 && lastPosition.y == 1 && !isKingUnderAttakAfterMove(1))
+	{
+		tempCurrentRookPosition.x = 7;
+		tempCurrentRookPosition.y = 0;
+		tempLastRookPosition.x = 7;
+		tempLastRookPosition.y = 2;
+		moveRookIfCastling(tempCurrentRookPosition, tempLastRookPosition);
+	}
+	else if (m_switchIfBlackKingMoved != 1 && m_switchIfWhiteLeftRookMoved != 1 && m_board.isFigurePlaced(currentPosition) && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::KING &&
+		m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::BLACK && lastPosition.x == 7 && lastPosition.y == 5 && !isKingUnderAttakAfterMove(1))
+	{
+		tempCurrentRookPosition.x = 7;
+		tempCurrentRookPosition.y = 7;
+		tempLastRookPosition.x = 7;
+		tempLastRookPosition.y = 4;
+		moveRookIfCastling(tempCurrentRookPosition, tempLastRookPosition);
+	}
+}
+
+void Game::moveRookIfCastling(const Position& tempCurrentRookPosition, const Position& tempLastRookPosition)
+{
+	movesLogging(tempCurrentRookPosition, tempLastRookPosition);
+	m_board.getSquare(tempLastRookPosition)->setFigure(m_board.getSquare(tempCurrentRookPosition)->getFigure());
+	m_board.getSquare(tempCurrentRookPosition)->setFigure(nullptr);
 }
 
 void Game::waitForPressAnyKey()

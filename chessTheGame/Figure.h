@@ -35,6 +35,7 @@ public:
     Figure& operator=(const Figure& right);
     virtual bool checkMove(const Position& currentPosition, const Position& lastPosition) = 0;
     virtual bool isCanAttak(const Position& currentPosition, const Position& lastPosition) = 0;
+    virtual bool isCanCastling(const Position& currentPosition, const Position& lastPosition) { return false; }
     const virtual FigureType& getType() = 0;
     const FigureColor& getFigureColor() const { return m_color; }
 
@@ -48,6 +49,7 @@ public:
     King(FigureColor color);
     bool checkMove(const Position& currentPosition, const Position& lastPosition) override;
     bool isCanAttak(const Position& currentPosition, const Position& lastPosition) override;
+    bool isCanCastling(const Position& currentPosition, const Position& lastPosition) override;
     const FigureType& getType() override;
 
 private:
