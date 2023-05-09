@@ -41,7 +41,7 @@ private:
 	void changeKingsCoordinatesLog(const Position& currentPosition, const Position& lastPosition, const int switchKing);
 	void makeMove(const Position& currentPosition, const Position& lastPosition);
 	void waitForPressAnyKey();
-	void isRooksMoved(const Position& currentPosition, const Position& lastPosition);
+	void isRookMoved(const Position& currentPosition, const Position& lastPosition);
 	void castling(const Position& currentPosition, const Position& lastPosition);
 	void moveRookIfCastling(const Position& currentPosition, const Position& lastPosition);
 

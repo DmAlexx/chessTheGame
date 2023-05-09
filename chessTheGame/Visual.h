@@ -6,6 +6,7 @@
 #include "Square.h"
 #include "Board.h"
 
+
 namespace
 {
     const int LENGTH_WIDTH_SIZE_BOARD = 8;

@@ -124,7 +124,7 @@ bool Game::checkFreePath(const Position& currentPos, const Position& lastPos)
 void Game::makeMove(const Position& currentPosition, const Position& lastPosition)
 {
 	castling(currentPosition, lastPosition);
-	isRooksMoved(currentPosition, lastPosition);
+	isRookMoved(currentPosition, lastPosition);
 	changeKingsCoordinatesLog(currentPosition, lastPosition, 1);
 	m_board.getSquare(lastPosition)->setFigure(m_board.getSquare(currentPosition)->getFigure());
 	m_board.getSquare(currentPosition)->setFigure(nullptr);
@@ -289,7 +289,7 @@ void Game::changeKingsCoordinatesLog(const Position& currentPosition, const Posi
 	}
 }
 
-void Game::isRooksMoved(const Position& currentPosition, const Position& lastPosition)
+void Game::isRookMoved(const Position& currentPosition, const Position& lastPosition)
 {
 	if (currentPosition.x == 0 && currentPosition.y == 0 && m_board.getSquare(currentPosition)->getFigure()->getType() == FigureType::ROOK
 		&& m_board.getSquare(currentPosition)->getFigure()->getFigureColor() == FigureColor::WHITE)
